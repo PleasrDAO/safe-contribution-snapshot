@@ -1,0 +1,22 @@
+{
+  "name": "safe-contribution-snapshot",
+  "version": "1.0.0",
+  "description": "Snapshots ETH contributions to a Gnosis Safe",
+  "main": "index.ts",
+  "repository": "https://github.com/pleasrdao/safe-contribution-snapshot",
+  "author": "shrugs",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^16.11.11",
+    "eslint": "^8.3.0",
+    "eslint-config-next": "^12.0.4",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.5.0",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2"
+  },
+  "dependencies": {
+    "ethers": "^5.5.2"
+  }
+}
