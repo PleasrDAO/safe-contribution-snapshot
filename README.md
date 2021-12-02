@@ -7,7 +7,11 @@
 - [ ] merges / de-dupes from previous snapshot
 
 ```
-ts-node index.ts [block]
+ts-node index.ts
 ```
 
 - Gnosis Safe Creation Block: `13724221`
+
+### Notes
+
+Not perfectly solid-state. If it crashes, run it from the beginning.
