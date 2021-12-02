@@ -2,9 +2,10 @@
 
 > Snapshots ETH contributions to a Gnosis Safe
 
-- [ ] snapshots from source block
-- [ ] resumable from block
-- [ ] merges / de-dupes from previous snapshot
+- [x] snapshots from source block
+- [x] resumable from block
+- [x] merges / de-dupes from previous snapshot
+- [x] is mostly solid-state
 
 ```
 ts-node index.ts
