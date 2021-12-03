@@ -6,6 +6,7 @@
 - [x] resumable from block
 - [x] merges / de-dupes from previous snapshot
 - [x] is mostly solid-state
+- [ ] support WETH ?
 
 ```
 ts-node index.ts
