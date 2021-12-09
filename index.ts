@@ -21,6 +21,8 @@ const safe = new ethers.Contract(
 
 type Snapshot = Record<string, ethers.BigNumber>;
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 function readFromSnapshot(): Snapshot {
   if (!existsSync(SNAPSHOT_FILENAME)) return {};
 
@@ -77,19 +79,29 @@ async function main() {
 
     console.log(`checking in ${fromChunkNumber} => ${toChunkNumber}...`);
 
-    const events = await safe.queryFilter(filter, fromChunkNumber, toChunkNumber);
-    events.filter(Boolean).forEach((event: ethers.Event) => {
-      if (!event.args?.sender || !event.args?.value) {
-        console.log(`Invalid event??`, event);
-        return;
-      }
+    try {
+      const events = await safe.queryFilter(filter, fromChunkNumber, toChunkNumber);
+      console.log(`got ${events.length} events in this set of blocks`);
+      events.filter(Boolean).forEach((event: ethers.Event) => {
+        if (!event.args?.sender || !event.args?.value) {
+          console.log(`Invalid event??`, event);
+          return;
+        }
 
-      handleContribution(event.args.sender as string, event.args.value as ethers.BigNumber);
-    });
+        handleContribution(event.args.sender as string, event.args.value as ethers.BigNumber);
+      });
 
-    setNextBlock(toChunkNumber + 1);
+      console.log(`setting next to ${toChunkNumber + 1}`);
+      setNextBlock(toChunkNumber + 1);
+
+      await sleep(2000);
+    } catch (error) {
+      console.error(error);
+      break;
+    }
   }
 
+  console.log('writing to snapshot.csv');
   writeToSnapshot(snapshot);
 }
 
