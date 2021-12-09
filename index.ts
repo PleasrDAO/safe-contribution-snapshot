@@ -25,6 +25,9 @@ const CEX_OVERRIDES: Record<string, string> = {
   // billy_72#4443
   '0xeb05dd124e0cbc16f2352fab345f55d475e51f88752777d2ebf530024edea2d8':
     '0xbF4B0bcDcC7DC29AB19f89d08b3a139893CdCFE6',
+  // vitozhang.eth#8367
+  '0x15a8bd82db8ab1f89735b3363450f58026bb1584e7945de7857ca6ea6dac1675':
+    '0x89E200fB309dfea8577bAa5aBD9268de00E27F7d',
 };
 
 const SAFE_DEPLOYED_IN_BLOCK = 13724221;
