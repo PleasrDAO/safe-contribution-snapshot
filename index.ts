@@ -28,7 +28,21 @@ const CEX_OVERRIDES: Record<string, string> = {
   // vitozhang.eth#8367
   '0x15a8bd82db8ab1f89735b3363450f58026bb1584e7945de7857ca6ea6dac1675':
     '0x89E200fB309dfea8577bAa5aBD9268de00E27F7d',
+  // datwh0re#2006
+  '0xef8fdbd3aa246ee78d04637a7ab099bacea814c4122e13328945582595b2bc12':
+    '0xAeAE3050c45e4B013b08d532A842982609966945',
 };
+
+// Exclude both the failed and successful auction refunds
+const EXCLUDE_TRANSACTIONS: Record<string, boolean> = {
+  '0xcfa584f6d072fd544a6f4e264eaededd4a5d3a0b842b3d3a6ff173f34682a698': true,
+  '0xad60df9a9df45d471f0a49062c9b6651cbc5de69e3964a4487337daa67104c9e': true,
+}
+
+const KNOWN_MISSING_TRANSACTIONS: Record<string, boolean> = {
+  '0x34c2c9aaafa12c317f4489ec2947650ce4213e3b90e3c2ba2267d2b1281650e9': true,
+  '0x3c39bc7e954109456b03a29c40c653a7e83f092ee4d2d272f34b6646a018cbe1': true,
+}
 
 const SAFE_DEPLOYED_IN_BLOCK = 13724221;
 const AUCTION_ENDED_IN_BLOCK = 13770208;
@@ -98,6 +112,33 @@ async function main() {
     snapshot[sender] = (snapshot[sender] ?? ethers.BigNumber.from(0)).add(value);
   };
 
+  const handleEvent = (event: ethers.Event) => {
+    if (!event.args?.sender || !event.args?.value) {
+      console.log(`Invalid event??`, event);
+      return;
+    }
+    if (EXCLUDE_TRANSACTIONS[event.transactionHash]) {
+      console.log('Exluding transaction', event.transactionHash);
+      return;
+    }
+    if (KNOWN_MISSING_TRANSACTIONS[event.transactionHash]) {
+      console.log('!!! FOUND KNOWN MISSING !!!', event.transactionHash);
+    }
+
+    const sender = CEX_OVERRIDES[event.transactionHash] ?? (event.args.sender as string);
+    const value = event.args.value as ethers.BigNumber;
+
+    if (CEX_OVERRIDES[event.transactionHash]) {
+      console.log(
+        `remapping tx ${event.transactionHash} for ${ethers.utils.formatEther(
+          value,
+        )} ETH from ${event.args.sender} to ${CEX_OVERRIDES[event.transactionHash]}`,
+      );
+    }
+
+    handleContribution(sender, value);
+  }
+
   for (let i = fromBlock; i <= toBlock; i = i + BLOCKS_PER_CHUNK) {
     const fromChunkNumber = i;
     const toChunkNumber = Math.min(fromChunkNumber + BLOCKS_PER_CHUNK - 1, toBlock);
@@ -107,25 +148,7 @@ async function main() {
     try {
       const events = await safe.queryFilter(filter, fromChunkNumber, toChunkNumber);
       console.log(`got ${events.length} events in this set of blocks`);
-      events.filter(Boolean).forEach((event: ethers.Event) => {
-        if (!event.args?.sender || !event.args?.value) {
-          console.log(`Invalid event??`, event);
-          return;
-        }
-
-        const sender = CEX_OVERRIDES[event.transactionHash] ?? (event.args.sender as string);
-        const value = event.args.value as ethers.BigNumber;
-
-        if (CEX_OVERRIDES[event.transactionHash]) {
-          console.log(
-            `remapping tx ${event.transactionHash} for ${ethers.utils.formatEther(
-              value,
-            )} ETH from ${event.args.sender} to ${CEX_OVERRIDES[event.transactionHash]}`,
-          );
-        }
-
-        handleContribution(sender, value);
-      });
+      events.filter(Boolean).forEach(handleEvent);
 
       console.log(`setting next to ${toChunkNumber + 1}`);
       setNextBlock(toChunkNumber + 1);
