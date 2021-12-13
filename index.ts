@@ -31,9 +31,9 @@ const CEX_OVERRIDES: Record<string, string> = {
   // datwh0re#2006
   '0xef8fdbd3aa246ee78d04637a7ab099bacea814c4122e13328945582595b2bc12':
     '0xAeAE3050c45e4B013b08d532A842982609966945',
-  // billy_72#4443
-  '0xeb05dd124e0cbc16f2352fab345f55d475e51f88752777d2ebf530024edea2d8':
-    '0xa1C00d9B9d0979D58F06B6fc438ea5ff2836c669',
+  // jack005#6109
+  '0xfcf6af6008d668951dd7ba1c7fe875df959c1e769efa5ca96d907b60755a43d2':
+    '0x42b70Cd9BE0fba250f7838e0b006C1c3560C42D9',
 };
 
 // Exclude both the failed and successful auction refunds
