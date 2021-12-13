@@ -35,7 +35,7 @@ export function writeToSnapshot(snapshot: Snapshot) {
 }
 
 export function getNextBlock() {
-  if (!existsSync(NEXT_BLOCK_INFO)) return SAFE_DEPLOYED_IN_BLOCK;
+  if (!existsSync(NEXT_BLOCK_INFO)) return undefined;
   return JSON.parse(readFileSync(NEXT_BLOCK_INFO).toString()).next;
 }
 

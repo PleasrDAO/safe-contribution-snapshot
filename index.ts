@@ -2,12 +2,20 @@ import { ethers } from 'ethers';
 import { config } from 'dotenv';
 import { formatEther } from '@ethersproject/units';
 
+import { Command } from 'commander';
+const program = new Command();
+
 import {
   CEX_OVERRIDES,
   EXCLUDE_TRANSACTIONS,
   KNOWN_MISSING_TRANSACTIONS,
 } from './lib/transactions';
-import { AUCTION_ENDED_IN_BLOCK, FREEROSSDAO_SAFE_ADDRESS, BLOCKS_PER_CHUNK } from './lib/const';
+import {
+  AUCTION_ENDED_IN_BLOCK,
+  FREEROSSDAO_SAFE_ADDRESS,
+  BLOCKS_PER_CHUNK,
+  SAFE_DEPLOYED_IN_BLOCK,
+} from './lib/const';
 import { readFromSnapshot, writeToSnapshot, getNextBlock, setNextBlock } from './lib/io';
 
 config();
@@ -21,12 +29,11 @@ const safe = new ethers.Contract(
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function main() {
+async function main(startBlock: number, toBlock: number, chunkSize: number) {
   const snapshot = readFromSnapshot();
   console.log(`Snapshot has ${Object.keys(snapshot).length} entries.`);
 
-  const fromBlock = getNextBlock();
-  const toBlock = AUCTION_ENDED_IN_BLOCK;
+  const fromBlock = getNextBlock() || startBlock;
 
   console.log(`Snapshotting from ${fromBlock} to ${toBlock}`);
   const filter = safe.filters.SafeReceived();
@@ -63,9 +70,9 @@ async function main() {
     handleContribution(sender, value);
   };
 
-  for (let i = fromBlock; i <= toBlock; i = i + BLOCKS_PER_CHUNK) {
+  for (let i = fromBlock; i <= toBlock; i = i + chunkSize) {
     const fromChunkNumber = i;
-    const toChunkNumber = Math.min(fromChunkNumber + BLOCKS_PER_CHUNK - 1, toBlock);
+    const toChunkNumber = Math.min(fromChunkNumber + chunkSize - 1, toBlock);
 
     console.log(`checking in ${fromChunkNumber} => ${toChunkNumber}...`);
 
@@ -88,7 +95,17 @@ async function main() {
   writeToSnapshot(snapshot);
 }
 
-main()
+program.version('0.0.1');
+program
+  .option('-s, --start <block>', 'start block', parseInt, SAFE_DEPLOYED_IN_BLOCK)
+  .option('-e, --end <block>', 'end block', parseInt, AUCTION_ENDED_IN_BLOCK)
+  .option('--chunk <number>', 'blocks per chunk', parseInt, BLOCKS_PER_CHUNK);
+
+program.parse(process.argv);
+
+const options = program.opts();
+
+main(options.start, options.end, options.chunk)
   .then(() => {
     process.exit(0);
   })
