@@ -4,16 +4,13 @@ import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { ethers } from 'ethers';
 import _ from 'lodash';
 
-const SNAPSHOT_FILENAME = 'snapshot.csv';
-const NEXT_BLOCK_INFO = 'next.json';
-
-// type Snapshot = Record<string, ethers.BigNumber>;
-type Transaction = {
+export type Ledger = Record<string, ethers.BigNumber>;
+export type Transaction = {
   hash: string;
   sender: string;
   value: ethers.BigNumber;
 };
-type Snapshot = {
+export type Snapshot = {
   currentBlock?: number;
   transactions: Record<string, Transaction>;
 };
@@ -81,17 +78,17 @@ export function writeSnapshot(filename: string, snapshot: Snapshot) {
 //   }, {});
 // }
 
-// export function writeToSnapshot(snapshot: Snapshot) {
-//   writeFileSync(
-//     SNAPSHOT_FILENAME,
-//     stringify(
-//       Object.keys(snapshot).map((sender) => ({ sender, value: snapshot[sender].toString() })),
-//       {
-//         header: true,
-//       },
-//     ),
-//   );
-// }
+export function writeLedger(filepath: string, ledger: Ledger) {
+  writeFileSync(
+    filepath,
+    stringify(
+      Object.keys(ledger).map((sender) => ({ sender, value: ledger[sender].toString() })),
+      {
+        header: true,
+      },
+    ),
+  );
+}
 
 // export function getNextBlock() {
 //   if (!existsSync(NEXT_BLOCK_INFO)) return undefined;
