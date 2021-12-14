@@ -22,7 +22,7 @@ const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_ENDPO
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function processSnapshot(snapshot: Snapshot) {
+async function processSnapshot(snapshot: Snapshot, outputFilename: string) {
   console.log(`Snapshot has ${Object.keys(snapshot.transactions).length} entries.`);
 
   const ledger: Ledger = {};
@@ -61,8 +61,8 @@ async function processSnapshot(snapshot: Snapshot) {
     ledger[address] = (ledger[address] ?? ethers.BigNumber.from(0)).add(val);
   }
 
-  console.log('writing to ledger.csv');
-  writeLedger('ledger.csv', ledger);
+  console.log(`writing to ${outputFilename}`);
+  writeLedger(outputFilename, ledger);
 }
 
 async function fetchTransactions(
@@ -130,9 +130,10 @@ async function main(
   endBlock: number,
   chunkSize: number,
   contractAddress: string,
+  outputFilename: string,
 ) {
   const snapshot = await fetchTransactions(startBlock, endBlock, chunkSize, contractAddress);
-  processSnapshot(snapshot);
+  processSnapshot(snapshot, outputFilename);
 }
 
 const parseDec = (n: string) => parseInt(n, 10);
@@ -142,14 +143,15 @@ program
   .option('-s, --start <block>', 'start block', parseDec, SAFE_DEPLOYED_IN_BLOCK)
   .option('-e, --end <block>', 'end block', parseDec, AUCTION_ENDED_IN_BLOCK)
   .option('--chunk <number>', 'blocks per chunk', parseDec, BLOCKS_PER_CHUNK)
-  .option('-a, --address <address>', 'address', FREEROSSDAO_SAFE_ADDRESS);
+  .option('-a, --address <address>', 'address', FREEROSSDAO_SAFE_ADDRESS)
+  .option('-o, --output <filename>', 'output filename', 'ledger.csv');
 
 program.parse(process.argv);
 
 const options = program.opts();
 
 console.log(options);
-main(options.start, options.end, options.chunk, options.address)
+main(options.start, options.end, options.chunk, options.address, options.output)
   .then(() => {
     process.exit(0);
   })
