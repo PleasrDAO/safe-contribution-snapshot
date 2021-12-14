@@ -1,6 +1,5 @@
 import { ethers } from 'ethers';
 import { config } from 'dotenv';
-import { formatEther } from '@ethersproject/units';
 
 import { Command } from 'commander';
 const program = new Command();
@@ -17,7 +16,6 @@ import {
   SAFE_DEPLOYED_IN_BLOCK,
 } from './lib/const';
 import { snapshotFilename, readSnapshot, writeSnapshot } from './lib/io';
-
 config();
 
 const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_ENDPOINT as string);
