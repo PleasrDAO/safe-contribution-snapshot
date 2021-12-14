@@ -1,4 +1,4 @@
-import { BigNumber } from "@ethersproject/bignumber";
+import { BigNumber } from '@ethersproject/bignumber';
 
 export const CEX_OVERRIDES: Record<string, string> = {
   // albatron9000#4542
@@ -49,5 +49,7 @@ export const KNOWN_MISSING_TRANSACTIONS = new Set([
 
 export const MANUAL_OVERRIDES: Record<string, BigNumber> = {
   // WETH contribution: https://etherscan.io/tx/0x70e3fafa676a4e98630f5bc402e1c672df46956fc652684119fe3a58e24234c0
-  '0xbe3f4cd4839682b3d679abe579a655d8272cd24d': BigNumber.from('231600000000000000')
-}
+  '0xbe3f4cd4839682b3d679abe579a655d8272cd24d': BigNumber.from('231600000000000000'),
+  // WETH contribution: https://etherscan.io/tx/0x15e13111185c837cb68ff7335f7f10d87351ad0de6785bbce83b86e3b6b37dc9
+  '0x17c09406ca6e612893a104e4dd9b1bc55d4c1120': BigNumber.from('1000000000000000000'),
+};
