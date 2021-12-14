@@ -1,4 +1,4 @@
-const CEX_OVERRIDES: Record<string, string> = {
+export const CEX_OVERRIDES: Record<string, string> = {
   // albatron9000#4542
   '0xe3f21f1be6131aab64509c4ccf91807446194548866bbbef363db458e0d57252':
     '0xE00Dc5eB53d376a50556f0039FDd3dA7dc83F06B',
@@ -32,12 +32,12 @@ const CEX_OVERRIDES: Record<string, string> = {
 };
 
 // Exclude both the failed and successful auction refunds
-const EXCLUDE_TRANSACTIONS = new Set([
+export const EXCLUDE_TRANSACTIONS = new Set([
   '0xcfa584f6d072fd544a6f4e264eaededd4a5d3a0b842b3d3a6ff173f34682a698',
   '0xad60df9a9df45d471f0a49062c9b6651cbc5de69e3964a4487337daa67104c9e',
 ]);
 
-const KNOWN_MISSING_TRANSACTIONS = new Set([
+export const KNOWN_MISSING_TRANSACTIONS = new Set([
   '0x34c2c9aaafa12c317f4489ec2947650ce4213e3b90e3c2ba2267d2b1281650e9',
   '0x3c39bc7e954109456b03a29c40c653a7e83f092ee4d2d272f34b6646a018cbe1',
 ]);
