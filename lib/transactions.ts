@@ -29,6 +29,9 @@ export const CEX_OVERRIDES: Record<string, string> = {
   // ysjlitt#8853
   '0x31febc4cd053a28fe0487997ae7d4103f71133a8514c6a2c2f668723c54e9969':
     '0x77080c88F9aBd8130866345Ef430EE99fAFcA73E',
+  // sh#1070
+  '0xe1781ce64dd72a412d525fb58bbfc03e5f2b987b2338bd1c4ddd1489300fc165':
+    '0x027a7d4d4A28835Aae52CA7fA9FdDe04B46040F0',
 };
 
 // Exclude both the failed and successful auction refunds
