@@ -2,11 +2,7 @@ import { ethers } from 'ethers';
 import { formatEther } from '@ethersproject/units';
 import _ from 'lodash';
 
-import {
-  CEX_OVERRIDES,
-  EXCLUDE_TRANSACTIONS,
-  MANUAL_OVERRIDES
-} from './lib/transactions';
+import { CEX_OVERRIDES, EXCLUDE_TRANSACTIONS, MANUAL_OVERRIDES } from './lib/transactions';
 import {
   AUCTION_ENDED_IN_BLOCK,
   FREEROSSDAO_SAFE_ADDRESS,
@@ -42,7 +38,7 @@ async function processSnapshot(snapshot: Snapshot) {
       return;
     }
 
-    const overrideAddress = CEX_OVERRIDES[transaction.hash]
+    const overrideAddress = CEX_OVERRIDES[transaction.hash];
     const sender = overrideAddress ?? transaction.sender;
     const value = transaction.value;
 
@@ -60,13 +56,13 @@ async function processSnapshot(snapshot: Snapshot) {
   _.values(snapshot.transactions).forEach(handleTransaction);
 
   for (const address in MANUAL_OVERRIDES) {
-    const val = MANUAL_OVERRIDES[address]
-    console.log(`overriding ${address} by ${formatEther(val)} ETH`)
+    const val = MANUAL_OVERRIDES[address];
+    console.log(`overriding ${address} by ${formatEther(val)} ETH`);
     ledger[address] = (ledger[address] ?? ethers.BigNumber.from(0)).add(val);
   }
 
-  console.log('writing to snapshot.csv');
-  writeLedger('snapshot.csv', ledger);
+  console.log('writing to ledger.csv');
+  writeLedger('ledger.csv', ledger);
 }
 
 async function fetchTransactions(
@@ -133,7 +129,8 @@ async function main(
   startBlock: number,
   endBlock: number,
   chunkSize: number,
-  contractAddress: string) {
+  contractAddress: string,
+) {
   const snapshot = await fetchTransactions(startBlock, endBlock, chunkSize, contractAddress);
   processSnapshot(snapshot);
 }

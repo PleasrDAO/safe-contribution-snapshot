@@ -1,4 +1,4 @@
-import { parse, stringify } from 'csv/sync';
+import { stringify } from 'csv/sync';
 import Path from 'path';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { ethers } from 'ethers';
@@ -55,20 +55,6 @@ export function writeSnapshot(filename: string, snapshot: Snapshot) {
   writeFileSync(filename, serializeSnapshot(snapshot));
 }
 
-// export function readFromSnapshot(): Snapshot {
-//   if (!existsSync(SNAPSHOT_FILENAME)) return {};
-
-//   const data = parse(readFileSync(SNAPSHOT_FILENAME), { columns: true }) as {
-//     sender: string;
-//     value: string;
-//   }[];
-
-//   return data.reduce<Snapshot>((memo, { sender, value }) => {
-//     memo[sender] = ethers.BigNumber.from(value);
-//     return memo;
-//   }, {});
-// }
-
 export function writeLedger(filepath: string, ledger: Ledger) {
   writeFileSync(
     filepath,
@@ -80,12 +66,3 @@ export function writeLedger(filepath: string, ledger: Ledger) {
     ),
   );
 }
-
-// export function getNextBlock() {
-//   if (!existsSync(NEXT_BLOCK_INFO)) return undefined;
-//   return JSON.parse(readFileSync(NEXT_BLOCK_INFO).toString()).next;
-// }
-
-// export function setNextBlock(next: number) {
-//   writeFileSync(NEXT_BLOCK_INFO, JSON.stringify({ next }));
-// }
