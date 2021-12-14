@@ -4,16 +4,7 @@ import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { ethers } from 'ethers';
 import _ from 'lodash';
 
-export type Ledger = Record<string, ethers.BigNumber>;
-export type Transaction = {
-  hash: string;
-  sender: string;
-  value: ethers.BigNumber;
-};
-export type Snapshot = {
-  currentBlock?: number;
-  transactions: Record<string, Transaction>;
-};
+import { Ledger, Transaction, Snapshot } from './types';
 
 function serializeTransaction(transaction: Transaction): string {
   return JSON.stringify({

@@ -1,10 +1,6 @@
 import { ethers } from 'ethers';
 import { formatEther } from '@ethersproject/units';
-import { config } from 'dotenv';
 import _ from 'lodash';
-
-import { Command } from 'commander';
-const program = new Command();
 
 import {
   CEX_OVERRIDES,
@@ -16,9 +12,14 @@ import {
   BLOCKS_PER_CHUNK,
   SAFE_DEPLOYED_IN_BLOCK,
 } from './lib/const';
-import { snapshotFilename, readSnapshot, writeSnapshot, Snapshot, Transaction, Ledger, writeLedger } from './lib/io';
-import { mainModule } from 'process';
+import { snapshotFilename, readSnapshot, writeSnapshot, writeLedger } from './lib/io';
+import { Ledger, Transaction, Snapshot } from './lib/types';
+
+import { config } from 'dotenv';
 config();
+
+import { Command } from 'commander';
+const program = new Command();
 
 const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_ENDPOINT as string);
 
