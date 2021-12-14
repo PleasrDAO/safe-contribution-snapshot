@@ -144,6 +144,8 @@ async function fetchTransactions(
       break;
     }
   }
+
+  return snapshot;
 }
 
 const parseDec = (n: string) => parseInt(n, 10);
