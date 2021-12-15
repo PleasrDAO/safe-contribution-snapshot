@@ -39,7 +39,10 @@ export const CEX_OVERRIDES: Record<string, string> = {
     '0x8a79af7f0aaa20685bcfab67d7a49ca52427bef8',
   // BenzelWashington#2898
   '0xbfa04b9ad6df8f617121963ef6b0478ef0c7463df1bcf58cba2d8c05a85bf678':
-    '0x605Cc1E913cb8AE9Ba3dfccf0B0266E6a6772c7d'
+    '0x605Cc1E913cb8AE9Ba3dfccf0B0266E6a6772c7d',
+  // Vince1988#9494
+  '0x3e0eab29de5de9e3478414e69de3b07b9c4c93f3fe630b913d44f6ef7abd66d4':
+    '0x7b83bA06594b6dB91957DABFF19d8aC2410c4CB1',
 };
 
 // Exclude both the failed and successful auction refunds
