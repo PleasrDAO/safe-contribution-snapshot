@@ -62,6 +62,7 @@ async function processSnapshot(snapshot: Snapshot, outputFilename: string) {
   }
 
   console.log(`writing to ${outputFilename}`);
+  console.log('Total eth:', ethers.utils.formatEther(_.values(ledger).reduce((a, b) => a.add(b), ethers.BigNumber.from(0))))
   writeLedger(outputFilename, ledger);
 }
 
