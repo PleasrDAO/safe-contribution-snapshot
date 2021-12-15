@@ -59,7 +59,9 @@ export function writeLedger(filepath: string, ledger: Ledger) {
   writeFileSync(
     filepath,
     stringify(
-      Object.keys(ledger).map((sender) => ({ sender, value: ledger[sender].toString() })),
+      _.shuffle(
+        Object.keys(ledger).map((sender) => ({ sender, value: ledger[sender].toString() })),
+      ),
       {
         header: true,
       },
