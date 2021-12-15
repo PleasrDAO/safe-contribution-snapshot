@@ -77,7 +77,7 @@ async function processSnapshot(snapshot: Snapshot, outputFilename: string, overr
       const val = ledger[a] ?? ethers.BigNumber.from(0);
       console.log(`draining ${address} by ${formatEther(val)} ETH`);
       addVal(FREEROSSDAO_SAFE_ADDRESS, val);
-      ledger[a] = ethers.BigNumber.from(0);
+      delete ledger.a;
     }
   }
 
@@ -91,8 +91,12 @@ async function processSnapshot(snapshot: Snapshot, outputFilename: string, overr
   // );
   console.log(
     'Total ross:',
-    ethers.utils.formatEther(_.values(freeLedger).reduce((a, b) => a.add(b), ethers.BigNumber.from(0)).toString())
-  )
+    ethers.utils.formatEther(
+      _.values(freeLedger)
+        .reduce((a, b) => a.add(b), ethers.BigNumber.from(0))
+        .toString(),
+    ),
+  );
   // writeLedger(outputFilename, ledger);
   writeLedger(outputFilename, freeLedger);
 }
