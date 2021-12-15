@@ -2,7 +2,12 @@ import { ethers } from 'ethers';
 import { formatEther } from '@ethersproject/units';
 import _ from 'lodash';
 
-import { CEX_OVERRIDES, EXCLUDE_TRANSACTIONS, MANUAL_OVERRIDES } from './lib/transactions';
+import {
+  CEX_OVERRIDES,
+  EXCLUDE_TRANSACTIONS,
+  KNOWN_CEX_ADDRESSES,
+  MANUAL_OVERRIDES,
+} from './lib/transactions';
 import {
   AUCTION_ENDED_IN_BLOCK,
   FREEROSSDAO_SAFE_ADDRESS,
@@ -22,14 +27,19 @@ const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_ENDPO
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function processSnapshot(snapshot: Snapshot, outputFilename: string) {
+async function processSnapshot(snapshot: Snapshot, outputFilename: string, override: boolean) {
   console.log(`Snapshot has ${Object.keys(snapshot.transactions).length} entries.`);
 
   const ledger: Ledger = {};
 
-  const handleContribution = (sender: string, value: ethers.BigNumber) => {
-    console.log(`${sender} sent ${formatEther(value)} ETH`);
-    ledger[sender] = (ledger[sender] ?? ethers.BigNumber.from(0)).add(value);
+  const addVal = (address: string, val: ethers.BigNumber) => {
+    const a = address.toLowerCase();
+    ledger[a] = (ledger[a] ?? ethers.BigNumber.from(0)).add(val);
+  };
+
+  const handleContribution = (sender: string, val: ethers.BigNumber) => {
+    console.log(`${sender} sent ${formatEther(val)} ETH`);
+    addVal(sender, val);
   };
 
   const handleTransaction = (transaction: Transaction) => {
@@ -55,14 +65,27 @@ async function processSnapshot(snapshot: Snapshot, outputFilename: string) {
 
   _.values(snapshot.transactions).forEach(handleTransaction);
 
-  for (const address in MANUAL_OVERRIDES) {
-    const val = MANUAL_OVERRIDES[address];
-    console.log(`overriding ${address} by ${formatEther(val)} ETH`);
-    ledger[address] = (ledger[address] ?? ethers.BigNumber.from(0)).add(val);
+  if (override) {
+    for (const address in MANUAL_OVERRIDES) {
+      const val = MANUAL_OVERRIDES[address];
+      console.log(`overriding ${address} by ${formatEther(val)} ETH`);
+      addVal(address, val);
+    }
+
+    for (const address of KNOWN_CEX_ADDRESSES) {
+      const a = address.toLowerCase();
+      const val = ledger[a] ?? ethers.BigNumber.from(0);
+      console.log(`draining ${address} by ${formatEther(val)} ETH`);
+      addVal(FREEROSSDAO_SAFE_ADDRESS, val);
+      ledger[a] = ethers.BigNumber.from(0);
+    }
   }
 
   console.log(`writing to ${outputFilename}`);
-  console.log('Total eth:', ethers.utils.formatEther(_.values(ledger).reduce((a, b) => a.add(b), ethers.BigNumber.from(0))))
+  console.log(
+    'Total eth:',
+    ethers.utils.formatEther(_.values(ledger).reduce((a, b) => a.add(b), ethers.BigNumber.from(0))),
+  );
   writeLedger(outputFilename, ledger);
 }
 
@@ -132,9 +155,10 @@ async function main(
   chunkSize: number,
   contractAddress: string,
   outputFilename: string,
+  override: boolean,
 ) {
   const snapshot = await fetchTransactions(startBlock, endBlock, chunkSize, contractAddress);
-  processSnapshot(snapshot, outputFilename);
+  processSnapshot(snapshot, outputFilename, override);
 }
 
 const parseDec = (n: string) => parseInt(n, 10);
@@ -145,14 +169,15 @@ program
   .option('-e, --end <block>', 'end block', parseDec, AUCTION_ENDED_IN_BLOCK)
   .option('--chunk <number>', 'blocks per chunk', parseDec, BLOCKS_PER_CHUNK)
   .option('-a, --address <address>', 'address', FREEROSSDAO_SAFE_ADDRESS)
-  .option('-o, --output <filename>', 'output filename', 'ledger.csv');
+  .option('-o, --output <filename>', 'output filename', 'ledger.csv')
+  .option('--override', 'use manual overrides?', true);
 
 program.parse(process.argv);
 
 const options = program.opts();
 
 console.log(options);
-main(options.start, options.end, options.chunk, options.address, options.output)
+main(options.start, options.end, options.chunk, options.address, options.output, options.override)
   .then(() => {
     process.exit(0);
   })

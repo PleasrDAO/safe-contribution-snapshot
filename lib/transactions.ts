@@ -56,3 +56,10 @@ export const MANUAL_OVERRIDES: Record<string, BigNumber> = {
   // WETH contribution: https://etherscan.io/tx/0x15e13111185c837cb68ff7335f7f10d87351ad0de6785bbce83b86e3b6b37dc9
   '0x17c09406ca6e612893a104e4dd9b1bc55d4c1120': BigNumber.from('1000000000000000000'),
 };
+
+export const KNOWN_CEX_ADDRESSES = [
+  '0xd24400ae8bfebb18ca49be86258a3c749cf46853',
+  '0xeb2629a2734e272bcc07bda959863f316f4bd4cf',
+  '0xa7efae728d2936e78bda97dc267687568dd593f3',
+  '0x4976a4a02f38326660d17bf34b431dc6e2eb2327',
+];
