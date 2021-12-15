@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import { formatEther } from '@ethersproject/units';
-import _ from 'lodash';
+import _, { add } from 'lodash';
 
 import {
   CEX_OVERRIDES,
@@ -81,12 +81,20 @@ async function processSnapshot(snapshot: Snapshot, outputFilename: string, overr
     }
   }
 
+  const FREE_PER_ETH = ethers.BigNumber.from(3_271_984);
+  const freeLedger = _.mapValues(ledger, (val) => val.mul(FREE_PER_ETH));
+
   console.log(`writing to ${outputFilename}`);
+  // console.log(
+  //   'Total eth:',
+  //   ethers.utils.formatEther(_.values(ledger).reduce((a, b) => a.add(b), ethers.BigNumber.from(0))),
+  // );
   console.log(
-    'Total eth:',
-    ethers.utils.formatEther(_.values(ledger).reduce((a, b) => a.add(b), ethers.BigNumber.from(0))),
-  );
-  writeLedger(outputFilename, ledger);
+    'Total ross:',
+    ethers.utils.formatEther(_.values(freeLedger).reduce((a, b) => a.add(b), ethers.BigNumber.from(0)).toString())
+  )
+  // writeLedger(outputFilename, ledger);
+  writeLedger(outputFilename, freeLedger);
 }
 
 async function fetchTransactions(
@@ -158,7 +166,7 @@ async function main(
   override: boolean,
 ) {
   const snapshot = await fetchTransactions(startBlock, endBlock, chunkSize, contractAddress);
-  processSnapshot(snapshot, outputFilename, override);
+  await processSnapshot(snapshot, outputFilename, override);
 }
 
 const parseDec = (n: string) => parseInt(n, 10);
