@@ -37,6 +37,9 @@ export const CEX_OVERRIDES: Record<string, string> = {
   // mwf1688#5541
   '0xa4335085cf9332ac34698ee9ab8d06c22603083a2ae70fb909572ed2cb8c5a4e':
     '0x8a79af7f0aaa20685bcfab67d7a49ca52427bef8',
+  // BenzelWashington#2898
+  '0xbfa04b9ad6df8f617121963ef6b0478ef0c7463df1bcf58cba2d8c05a85bf678':
+    '0x605Cc1E913cb8AE9Ba3dfccf0B0266E6a6772c7d'
 };
 
 // Exclude both the failed and successful auction refunds
@@ -62,4 +65,5 @@ export const KNOWN_CEX_ADDRESSES = [
   '0xeb2629a2734e272bcc07bda959863f316f4bd4cf',
   '0xa7efae728d2936e78bda97dc267687568dd593f3',
   '0x4976a4a02f38326660d17bf34b431dc6e2eb2327',
+  '0x4ad64983349c49defe8d7a4686202d24b25d0ce8',
 ];
