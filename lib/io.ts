@@ -36,7 +36,11 @@ function deserializeSnapshot(snapshot: string): Snapshot {
   };
 }
 
-export function snapshotFilename(startBlock: number, endBlock: number, contractAddress: string) {
+export function snapshotFilename(
+  startBlock: number,
+  endBlock: number | string,
+  contractAddress: string,
+) {
   return Path.join(__dirname, '../output', `${contractAddress}-${startBlock}-${endBlock}.json`);
 }
 
