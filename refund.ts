@@ -10,7 +10,7 @@ import {
 } from './lib/transactions';
 import {
   AUCTION_ENDED_IN_BLOCK,
-  FREEROSSDAO_SAFE_ADDRESS,
+  CONTRIBUTION_ADDRESS,
   BLOCKS_PER_CHUNK,
   SAFE_DEPLOYED_IN_BLOCK,
 } from './lib/const';
@@ -76,7 +76,7 @@ async function processSnapshot(snapshot: Snapshot, outputFilename: string, overr
       const a = address.toLowerCase();
       const val = ledger[a] ?? ethers.BigNumber.from(0);
       console.log(`draining ${address} by ${formatEther(val)} ETH`);
-      addVal(FREEROSSDAO_SAFE_ADDRESS, val);
+      addVal(CONTRIBUTION_ADDRESS, val);
       delete ledger.a;
     }
   }
@@ -170,7 +170,7 @@ program
   .option('-s, --start <block>', 'start block', parseDec, AUCTION_ENDED_IN_BLOCK + 1)
   .option('-e, --end <block>', 'end block', parseDec, 0)
   .option('--chunk <number>', 'blocks per chunk', parseDec, BLOCKS_PER_CHUNK)
-  .option('-a, --address <address>', 'address', FREEROSSDAO_SAFE_ADDRESS)
+  .option('-a, --address <address>', 'address', CONTRIBUTION_ADDRESS)
   .option('-o, --output <filename>', 'output filename', 'refund.csv')
   .option('--override', 'use manual overrides?', false);
 
