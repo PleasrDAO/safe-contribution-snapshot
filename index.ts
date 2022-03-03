@@ -116,7 +116,9 @@ async function processSnapshot(snapshot: Snapshot, outputFilename: string, overr
   }
 
   const PER_ETH = ethers.BigNumber.from(TOKENS_PER_ETH);
-  const freeLedger = _.mapValues(ledger, (val) => val.mul(PER_ETH));
+  const freeLedger = _.mapValues(ledger, (val) =>
+    val.mul(PER_ETH).div(ethers.BigNumber.from('1000000000000000000')),
+  );
 
   console.log(`writing to ${outputFilename}`);
   console.log(
