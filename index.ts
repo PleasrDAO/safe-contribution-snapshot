@@ -18,6 +18,10 @@ import {
 import { snapshotFilename, readSnapshot, writeSnapshot, writeLedger } from './lib/io';
 import { Ledger, Transaction, Snapshot } from './lib/types';
 
+import partybid_contributions from './partybid-contributions';
+import partybid_direct from './partybid-direct';
+import partybid_withdrawals from './partybid-withdrawals';
+
 import { config } from 'dotenv';
 config();
 
@@ -37,10 +41,18 @@ async function processSnapshot(snapshot: Snapshot, outputFilename: string, overr
     const a = address.toLowerCase();
     ledger[a] = (ledger[a] ?? ethers.BigNumber.from(0)).add(val);
   };
+  const subVal = (address: string, val: ethers.BigNumber) => {
+    const a = address.toLowerCase();
+    ledger[a] = (ledger[a] ?? ethers.BigNumber.from(0)).sub(val);
+  };
 
   const handleContribution = (sender: string, val: ethers.BigNumber) => {
     console.log(`${sender} sent ${formatEther(val)} ETH`);
     addVal(sender, val);
+  };
+  const handleWithdraw = (sender: string, val: ethers.BigNumber) => {
+    console.log(`${sender} took ${formatEther(val)} ETH`);
+    subVal(sender, val);
   };
 
   const handleTransaction = (transaction: Transaction) => {
@@ -80,6 +92,27 @@ async function processSnapshot(snapshot: Snapshot, outputFilename: string, overr
       addVal(CONTRIBUTION_ADDRESS, val);
       delete ledger.a;
     }
+  }
+
+  for (const address in partybid_contributions) {
+    handleContribution(
+      address,
+      ethers.BigNumber.from(Math.round(partybid_contributions[address] * 1000000)).mul(10 ** 12),
+    );
+  }
+  for (const address in partybid_direct) {
+    handleContribution(
+      address,
+      ethers.BigNumber.from(Math.round(parseFloat(partybid_direct[address]) * 1000000)).mul(
+        10 ** 12,
+      ),
+    );
+  }
+  for (const address in partybid_withdrawals) {
+    handleWithdraw(
+      address,
+      ethers.BigNumber.from(1000000 * parseFloat(partybid_withdrawals[address])).mul(10 ** 12),
+    );
   }
 
   const PER_ETH = ethers.BigNumber.from(TOKENS_PER_ETH);
