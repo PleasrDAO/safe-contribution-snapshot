@@ -13,6 +13,7 @@ import {
   CONTRIBUTION_ADDRESS,
   BLOCKS_PER_CHUNK,
   SAFE_DEPLOYED_IN_BLOCK,
+  TOKENS_PER_ETH,
 } from './lib/const';
 import { snapshotFilename, readSnapshot, writeSnapshot, writeLedger } from './lib/io';
 import { Ledger, Transaction, Snapshot } from './lib/types';
@@ -81,16 +82,16 @@ async function processSnapshot(snapshot: Snapshot, outputFilename: string, overr
     }
   }
 
-  const FREE_PER_ETH = ethers.BigNumber.from(3_271_984);
-  const freeLedger = _.mapValues(ledger, (val) => val.mul(FREE_PER_ETH));
+  const PER_ETH = ethers.BigNumber.from(TOKENS_PER_ETH);
+  const freeLedger = _.mapValues(ledger, (val) => val.mul(PER_ETH));
 
   console.log(`writing to ${outputFilename}`);
-  // console.log(
-  //   'Total eth:',
-  //   ethers.utils.formatEther(_.values(ledger).reduce((a, b) => a.add(b), ethers.BigNumber.from(0))),
-  // );
   console.log(
-    'Total ross:',
+    'Total eth:',
+    ethers.utils.formatEther(_.values(ledger).reduce((a, b) => a.add(b), ethers.BigNumber.from(0))),
+  );
+  console.log(
+    'Total tokens:',
     ethers.utils.formatEther(
       _.values(freeLedger)
         .reduce((a, b) => a.add(b), ethers.BigNumber.from(0))
